@@ -72,6 +72,14 @@ func (app *AppIcon) TableName() string {
 	return "appinfo_appicon"
 }
 
+func (app *AppIcon) TableIndex() [][]string{
+	//添加索引
+	return [][]string{
+		[]string{"Title"},
+	}
+
+}
+
 
 
 type AppVersion struct {
@@ -91,11 +99,18 @@ type AppVersion struct {
 }
 
 
+
 func (app *AppVersion) TableName() string {
 	//重命名表名
 	return "appinfo_appversion"
 }
 
+
+func (app *AppVersion) TableIndex() [][]string{
+	return [][]string{
+		[]string{"Title"},
+	}
+}
 
 type AppDownloadPlatform struct {
 	Id int64 					`orm:"pk;auto"`
@@ -122,10 +137,17 @@ type AppDownloadAddress struct {
 	Uri string     				`orm:"size(256);null"`
 }
 
+
 func (app *AppDownloadAddress) TableName() string {
 	return "appinfo_appdownloadaddress"
 }
 
+
+func (app *AppDownloadAddress) TableIndex() [][]string {
+	return [][]string{
+		[]string{"Version"},
+	}
+}
 
 type AppLink struct {
 	abstract.ResourceLink
@@ -143,6 +165,11 @@ func (app *AppLink) TableName() string {
 }
 
 
+func (app *AppLink) TableIndex() [][]string{
+	return [][]string{
+		[]string{"AppVersion","Storage"},
+	}
+}
 
 type AppVersionStat struct {
 	abstract.ResourceStat
@@ -155,7 +182,11 @@ func (app *AppVersionStat) TableName() string {
 	return "appinfo_appversionstat"
 }
 
-
+func (app *AppVersionStat) TableIndex() [][]string{
+	return [][]string{
+		[]string{"AppVersion"},
+	}
+}
 
 
 func init() {
