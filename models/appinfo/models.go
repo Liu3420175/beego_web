@@ -35,7 +35,7 @@ func (app *AppStorage) TableUnique()[][] string{
 type App struct {
 	Id int64                  	`orm:"pk;auto"`
 	Name string               	`orm:"size(70);null"`
-	NaneEn string             	`orm:"size(128);null"`
+	NameEn string             	`orm:"size(128);null"`
 	Title string              	`orm:"size(30);null"`
 	Platform string           	`orm:"size(20);null"`
 	DateCreated time.Time     	`orm:"auto_now_add;type(datetime)"`

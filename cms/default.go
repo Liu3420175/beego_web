@@ -1,4 +1,4 @@
-package controllers
+package cms
 
 import (
 	"github.com/astaxie/beego"
