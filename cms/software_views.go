@@ -8,16 +8,15 @@ import (
 	"kandao_backend/models/appinfo"
 )
 
-type AddApp struct {
+
+
+type Software struct {
 	beego.Controller
+
 }
 
-type AppList struct {
-	beego.Controller
-}
-
-func (data *AppList) Get() {
-    //获取软件列表
+func (data *Software) SoftwareList() {
+    //获取软件列表,自定义名
     page_ := data.GetString("page","1")
     q := data.GetString("q")
     //state := data.GetString("state")
@@ -57,8 +56,8 @@ func (data *AppList) Get() {
     query = query.Filter("is_active",1).OrderBy("-id")
     count,_ := query.Count()
     query = query.Limit(limit,offset)
-	num,err := query.Values(&maps,"Id","Name","NameEn")
-    println(num)
+	_,err := query.Values(&maps,"Id","Name","NameEn")
+
     type JSONStruct struct {
        Code int   `json:"code"`
        Msg string  `json:"msg"`
@@ -75,7 +74,6 @@ func (data *AppList) Get() {
 		data.ServeJSON()
 		return
 	}else{
-		println(1111)
 		data.Data["json"] = map[string]interface{}{"code":401,"msg":"Error"}//mystruct
 		data.ServeJSON()
 		return
@@ -85,4 +83,27 @@ func (data *AppList) Get() {
     //	query = query.Filter("state")
 	//}
 
+}
+
+func (data *Software) GetSoftwareInfo(){
+	 id_ := data.Ctx.Input.Param(":id")
+	 id,id_err := strconv.Atoi(id_)
+
+	 if id_err != nil{
+	 	data.Data["json"] = map[string] interface{} {"code":10001,"msg":"Params Error"}
+	 	data.ServeJSON()
+	 	return
+	 }
+
+	 o := orm.NewOrm()
+	 o.Using("appinfo")
+	 app := appinfo.App{Id:int64(id)}
+	 err := o.Read(&app)
+	 if err == nil{
+	 	
+	 }else{
+	 	data.Data["json"] = map[string]interface{}{"code":10101,"msg":"APP dose not exist"}
+	 	data.ServeJSON()
+
+	 }
 }

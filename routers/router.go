@@ -7,5 +7,5 @@ import (
 
 func init() {
     beego.Router("/", &cms.MainController{})
-    beego.Router("/v1/app/list/",&cms.AppList{})
+    beego.Router("/cms/v1/app/list/",&cms.Software{},"get:SoftwareList")
 }
