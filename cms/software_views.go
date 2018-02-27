@@ -18,10 +18,10 @@ type AppList struct {
 
 func (data *AppList) Get() {
     //获取软件列表
-    page_ := data.GetString("page","10")
+    page_ := data.GetString("page","1")
     q := data.GetString("q")
     //state := data.GetString("state")
-    limit_ := data.GetString("limit","1")
+    limit_ := data.GetString("limit","10")
 
     page_ = strings.Trim(page_," ")
     q = strings.Trim(q," ")
@@ -48,37 +48,37 @@ func (data *AppList) Get() {
     if page < 1{
     	page = 1
 	}
+	offset := (page -1) * limit
 
-	//offset := (page -1) * limit
 	o := orm.NewOrm()
 	o.Using("appinfo")
 	app := new(appinfo.App)
 	query := o.QueryTable(app)
     query = query.Filter("is_active",1).OrderBy("-id")
     count,_ := query.Count()
-    //query = query.Limit(limit,offset)
+    query = query.Limit(limit,offset)
 	num,err := query.Values(&maps,"Id","Name","NameEn")
-    println(maps[0]["Id"])
+    println(num)
     type JSONStruct struct {
-       code int
-       msg string
-       result []orm.Params
-       count int64
-       page int
-       limit int
+       Code int   `json:"code"`
+       Msg string  `json:"msg"`
+       Result []orm.Params `json:"result"`
+       Count int64    `json:"count"`
+       Page int       `json:"page"`
+       Limit int      `json:"limit"`
 	}
 
 	if err == nil{
-		println(2222)
-		println("num==",num)
+
 		mystruct := &JSONStruct{0,"Success",maps,count,page,limit}
 		data.Data["json"] = mystruct
 		data.ServeJSON()
+		return
 	}else{
 		println(1111)
-		mystruct := &JSONStruct{401,"Faile",nil,count,page,limit}
-		data.Data["json"] = mystruct
+		data.Data["json"] = map[string]interface{}{"code":401,"msg":"Error"}//mystruct
 		data.ServeJSON()
+		return
 
 	}
     //if state != ""{
