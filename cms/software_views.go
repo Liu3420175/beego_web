@@ -8,6 +8,9 @@ import (
 	"kandao_backend/models/appinfo"
 	"kandao_backend/utils"
 	"reflect"
+	"github.com/astaxie/beego/validation"
+
+	"encoding/json"
 )
 
 
@@ -93,6 +96,7 @@ func (data *Software) GetSoftwareInfo(){
 	 o.Using("appinfo")
 	 app := appinfo.App{Id:int64(id)}
 	 err := o.Read(&app)
+
 	 if err == nil{
 	 	result := map[string]interface{}{
 	 		"obj_id":app.Id,
@@ -101,8 +105,8 @@ func (data *Software) GetSoftwareInfo(){
 			"description": app.Description,
 			"creator": app.Creator,
 			"lastmodifier": app.Lastmodifier,
-			//"date_created": cdate,
-			//"date_modified": mdate,
+			"date_created": app.DateCreated.Format(utils.TIME_LAYOUT),
+			"date_modified": app.DateModified.Format(utils.TIME_LAYOUT),
 			"platform": app.Platform,
 			"name_en":app.NameEn,
 			"is_online":app.IsOnline,
@@ -125,4 +129,30 @@ func (data *Software) GetSoftwareInfo(){
 		 data.ServeJSON()
 		 return
 	 }
+}
+
+func (data *Software) SoftwareAdd() {
+    //接收json数据
+    println(1111)
+
+    body := data.Ctx.Input.RequestBody
+    var f SoftwareForm
+    json.Unmarshal(body,&f)
+	valid := validation.Validation{}
+    b,err := valid.Valid(&f)
+    println(b,err)
+    println(f.Name)
+	data.Data["json"] = map[string] interface{} {"code":10001,"msg":"Params Error"}
+	data.ServeJSON()
+	return
+
+}
+
+
+func (data *Software) SoftwareChange(){
+	
+}
+
+func (data *Software) SoftwareDelete() {
+	
 }
