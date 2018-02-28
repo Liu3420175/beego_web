@@ -6,6 +6,8 @@ import (
 	"strings"
 	"strconv"
 	"kandao_backend/models/appinfo"
+	"kandao_backend/utils"
+	"reflect"
 )
 
 
@@ -30,7 +32,7 @@ func (data *Software) SoftwareList() {
     page,page_err := strconv.Atoi(page_)
     limit,limit_err := strconv.Atoi(limit_)
 
-    var maps []orm.Params
+     maps := []orm.Params{} //
 
     if page_err != nil{
     	page = 1
@@ -56,33 +58,25 @@ func (data *Software) SoftwareList() {
     query = query.Filter("is_active",1).OrderBy("-id")
     count,_ := query.Count()
     query = query.Limit(limit,offset)
-	_,err := query.Values(&maps,"Id","Name","NameEn")
-
-    type JSONStruct struct {
-       Code int   `json:"code"`
-       Msg string  `json:"msg"`
-       Result []orm.Params `json:"result"`
-       Count int64    `json:"count"`
-       Page int       `json:"page"`
-       Limit int      `json:"limit"`
-	}
+	_,err := query.Values(&maps,"Id","Name","Title","Description","Platform") // TODO信息不完全
 
 	if err == nil{
-
-		mystruct := &JSONStruct{0,"Success",maps,count,page,limit}
+        code := 0
+        msg := utils.Codes[code]
+		mystruct := &utils.JSONList{code,msg,maps,count,page,limit}
 		data.Data["json"] = mystruct
 		data.ServeJSON()
 		return
+
 	}else{
-		data.Data["json"] = map[string]interface{}{"code":401,"msg":"Error"}//mystruct
+		code := 10000
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
 		data.ServeJSON()
 		return
 
 	}
-    //if state != ""{
-    //	query = query.Filter("state")
-	//}
-
 }
 
 func (data *Software) GetSoftwareInfo(){
@@ -100,10 +94,35 @@ func (data *Software) GetSoftwareInfo(){
 	 app := appinfo.App{Id:int64(id)}
 	 err := o.Read(&app)
 	 if err == nil{
-	 	
-	 }else{
-	 	data.Data["json"] = map[string]interface{}{"code":10101,"msg":"APP dose not exist"}
-	 	data.ServeJSON()
+	 	result := map[string]interface{}{
+	 		"obj_id":app.Id,
+			"name": app.Name,
+			"title": app.Title,
+			"description": app.Description,
+			"creator": app.Creator,
+			"lastmodifier": app.Lastmodifier,
+			//"date_created": cdate,
+			//"date_modified": mdate,
+			"platform": app.Platform,
+			"name_en":app.NameEn,
+			"is_online":app.IsOnline,
+			"description_en":app.DescriptionEn,
+			//"icon_uri":obj.icon_uri(),
+			/label":reflect.TypeOf(app),
+		}
+		 code := 0
+		 msg := utils.Codes[code]
+		 mystruct := &utils.JSONObject{code,msg,result}
+		 data.Data["json"] = mystruct
+		 data.ServeJSON()
+		 return
 
+	 }else{
+		 code := 10701
+		 msg := utils.Codes[code]
+		 mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		 data.Data["json"] = mystruct
+		 data.ServeJSON()
+		 return
 	 }
 }

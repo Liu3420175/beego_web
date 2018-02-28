@@ -8,4 +8,5 @@ import (
 func init() {
     beego.Router("/", &cms.MainController{})
     beego.Router("/cms/v1/app/list/",&cms.Software{},"get:SoftwareList")
+    beego.Router("/cms/v1/app/?:id",&cms.Software{},"get:GetSoftwareInfo")
 }
