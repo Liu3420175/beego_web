@@ -108,7 +108,7 @@ func (data *Software) GetSoftwareInfo(){
 			"is_online":app.IsOnline,
 			"description_en":app.DescriptionEn,
 			//"icon_uri":obj.icon_uri(),
-			/label":reflect.TypeOf(app),
+			"label":reflect.TypeOf(app),
 		}
 		 code := 0
 		 msg := utils.Codes[code]
