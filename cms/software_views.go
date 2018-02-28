@@ -140,11 +140,58 @@ func (data *Software) SoftwareAdd() {
     json.Unmarshal(body,&f)
 	valid := validation.Validation{}
     b,err := valid.Valid(&f)
-    println(b,err)
-    println(f.Name)
-	data.Data["json"] = map[string] interface{} {"code":10001,"msg":"Params Error"}
-	data.ServeJSON()
-	return
+
+    if err != nil {
+		code := 10000
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+
+	if !b {
+		code := 10001
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+	o := orm.NewOrm()
+	o.Using("appinfo")
+	var app appinfo.App
+	app.Name = f.Name
+	app.NameEn = f.NameEn
+	print(f.NameEn,"qqq")
+	app.Description = f.Description
+	app.DescriptionEn = f.DescriptionEn
+    app.Title = f.Title
+    app.Platform = f.Platform
+    app.IsOnline = f.IsOnline
+    app.Creator = "guyanbudufei"
+    app.Lastmodifier = "guyanbudufei"
+    app.IsActive = true
+	id, err := o.Insert(&app)
+	if err == nil {
+		code := 0
+		result := map[string]interface{}{
+			"id":id,
+		}
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,result}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+
+	}else{
+		code := 10000
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
 
 }
 
