@@ -10,4 +10,6 @@ func init() {
     beego.Router("/cms/v1/app/list/",&cms.Software{},"get:SoftwareList")
     beego.Router("/cms/v1/app/?:id",&cms.Software{},"get:GetSoftwareInfo")
     beego.Router("/cms/v1/app/add/",&cms.Software{},"post:SoftwareAdd")
+    beego.Router("/cms/v1/app/?:id/change/",&cms.Software{},"post:SoftwareChange")
+	beego.Router("/cms/v1/app/?:id/delete/",&cms.Software{},"post:SoftwareDelete")
 }

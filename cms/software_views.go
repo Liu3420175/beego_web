@@ -133,7 +133,6 @@ func (data *Software) GetSoftwareInfo(){
 
 func (data *Software) SoftwareAdd() {
     //接收json数据
-    println(1111)
 
     body := data.Ctx.Input.RequestBody
     var f SoftwareForm
@@ -163,7 +162,6 @@ func (data *Software) SoftwareAdd() {
 	var app appinfo.App
 	app.Name = f.Name
 	app.NameEn = f.NameEn
-	print(f.NameEn,"qqq")
 	app.Description = f.Description
 	app.DescriptionEn = f.DescriptionEn
     app.Title = f.Title
@@ -197,9 +195,112 @@ func (data *Software) SoftwareAdd() {
 
 
 func (data *Software) SoftwareChange(){
-	
+
+	id_ := data.Ctx.Input.Param(":id")
+	id,id_err := strconv.Atoi(id_)
+	if id_err != nil{
+		data.Data["json"] = map[string] interface{} {"code":10001,"msg":"Params Error"}
+		data.ServeJSON()
+		return
+	}
+    app := appinfo.App{Id:int64(id)}
+	o := orm.NewOrm()
+	o.Using("appinfo")
+	err_1 := o.Read(&app)
+	if err_1 != nil{
+		code := 10701
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+	body := data.Ctx.Input.RequestBody
+	var f SoftwareForm
+	json.Unmarshal(body,&f)
+
+	valid := validation.Validation{}
+	b,err := valid.Valid(&f)
+
+	if err != nil {
+		code := 10000
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+
+	if !b {
+		code := 10001
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+
+	app.Name = f.Name
+	app.NameEn = f.NameEn
+	app.Description = f.Description
+	app.DescriptionEn = f.DescriptionEn
+	app.Title = f.Title
+	app.Platform = f.Platform
+	app.IsOnline = f.IsOnline
+	if _,err_2 := o.Update(&app);err_2 == nil{
+		code := 0
+		result := map[string]interface{}{
+			"id":id,
+		}
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,result}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}else{
+		code := 10000
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
 }
 
 func (data *Software) SoftwareDelete() {
-	
+	id_ := data.Ctx.Input.Param(":id")
+	id,id_err := strconv.Atoi(id_)
+	if id_err != nil{
+		data.Data["json"] = map[string] interface{} {"code":10001,"msg":"Params Error"}
+		data.ServeJSON()
+		return
+	}
+	app := appinfo.App{Id:int64(id)}
+	o := orm.NewOrm()
+	o.Using("appinfo")
+	err_1 := o.Read(&app)
+	if err_1 != nil{
+		code := 10701
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	}
+	app.IsActive = false
+	if _,err := o.Update(&app);err == nil{
+		code := 0
+		msg := utils.Codes[code]
+		mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+		data.Data["json"] = mystruct
+		data.ServeJSON()
+		return
+	} else{
+	code := 10000
+	msg := utils.Codes[code]
+	mystruct := &utils.JSONObject{code,msg,make(map[string]interface{})}
+	data.Data["json"] = mystruct
+	data.ServeJSON()
+	return
+	}
 }
