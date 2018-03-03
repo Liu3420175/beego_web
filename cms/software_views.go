@@ -83,7 +83,7 @@ func (data *Software) SoftwareList() {
 		data.Data["json"] = mystruct
 		data.ServeJSON()
 		return
-		//utils.Common_response(*data,0,count,page,limit,true,maps)
+		//data.Common_response(0,count,page,limit,true,maps)
 
 	}else{
 		code := 10000
