@@ -34,8 +34,8 @@ func (data *Software) SoftwareList() {
 
     page,page_err := strconv.Atoi(page_)
     limit,limit_err := strconv.Atoi(limit_)
-
-     maps := []orm.Params{} //
+	maps := []orm.Params{}
+	var apps []*appinfo.App
 
     if page_err != nil{
     	page = 1
@@ -61,9 +61,22 @@ func (data *Software) SoftwareList() {
     query = query.Filter("is_active",1).OrderBy("-id")
     count,_ := query.Count()
     query = query.Limit(limit,offset)
-	_,err := query.Values(&maps,"Id","Name","Title","Description","Platform") // TODO信息不完全
+	//_,err := query.Values(&maps,"Id","Name","Title","Description","Platform") // TODO信息不完全
+	_,err := query.All(&apps)
 
 	if err == nil{
+
+		for _,obj := range apps{
+			tmp := make(map[string]interface{})
+			tmp["id"] = obj.Id
+			tmp["name"] = obj.Name
+			tmp["title"] = obj.Title
+			tmp["description"] = obj.Description
+			tmp["platform"] = obj.Platform
+			latestverion := obj.LatestVersion(o)
+			tmp["version"] = latestverion.VersionCode
+			maps = append(maps,tmp)
+		}
         code := 0
         msg := utils.Codes[code]
 		mystruct := &utils.JSONList{code,msg,maps,count,page,limit}

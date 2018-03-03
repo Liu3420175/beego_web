@@ -56,6 +56,17 @@ func (app *App) TableName() string{
 	return "appinfo_app"
 }
 
+func (app *App) LatestVersion(o orm.Ormer,) AppVersion {
+	var version AppVersion
+	err := o.QueryTable(version.TableName()).Filter("Title",app.Id).OrderBy("-VersionCode").One(&version)
+
+	if err != nil{
+		fmt.Println(err.Error())
+
+	}
+	return version
+
+}
 
 type AppIcon struct {
 	Id int64 					`orm:"pk;auto"`
