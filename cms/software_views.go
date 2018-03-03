@@ -74,7 +74,7 @@ func (data *Software) SoftwareList() {
 			tmp["description"] = obj.Description
 			tmp["platform"] = obj.Platform
 			latestverion := obj.LatestVersion(o)
-			tmp["version"] = latestverion.VersionCode
+			tmp["version"] = latestverion.VersionName
 			maps = append(maps,tmp)
 		}
         code := 0
@@ -125,7 +125,7 @@ func (data *Software) GetSoftwareInfo(){
 			"is_online":app.IsOnline,
 			"description_en":app.DescriptionEn,
 			//"icon_uri":obj.icon_uri(),
-			"label":reflect.TypeOf(app),
+			"label":reflect.TypeOf(app).Name(),
 		}
 		 code := 0
 		 msg := utils.Codes[code]

@@ -18,6 +18,7 @@ func CreateTable(){
 }
 
 func main() {
+
 	orm.RegisterDriver("mysql",orm.DRMySQL)
 	orm.RegisterDataBase("default","mysql","root:asdasd@tcp(127.0.0.1:3306)/backend2?charset=utf8")
 	//o := orm.NewOrm()
