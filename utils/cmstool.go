@@ -24,7 +24,12 @@ type JSONObject struct {
 	Result map[string]interface{} `json:"result"`
 }
 
-func (data *T) Common_response( code int,count int64,page int,limit int,flag bool,r []orm.Params)  {
+
+//type CMSResponse interface {
+
+//}
+
+func (data *T) CommonResponse( code int,count int64,page int,limit int,flag bool,r []orm.Params)  {
 
 		msg := Codes[code]
 		if flag {

@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	_ "kandao_backend/models/appinfo"
+	_ "kandao_backend/models/appinfo" //这种导入方式会执行package里的init()函数
 )
 
 func CreateTable(){
